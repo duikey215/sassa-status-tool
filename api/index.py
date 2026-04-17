@@ -3,11 +3,6 @@ import requests
 
 app = FastAPI()
 
-# Agar galti se koi seedha is file par aaye, toh error na aaye
-@app.get("/")
-def read_root():
-    return {"message": "Engine is running. Go to home page."}
-
 @app.get("/api/check")
 def check_status(id_num: str, phone: str):
     headers = {
@@ -17,7 +12,7 @@ def check_status(id_num: str, phone: str):
     api_url = f"https://srd.sassa.gov.za/sc19/status/{id_num}/{phone}"
     try:
         r = requests.get(api_url, headers=headers, timeout=10)
-        # Agar detail galat hai ya server "Not Found" bole toh FAILED bhej do
+        # Agar server 200 OK na de, toh sidha Failed
         if r.status_code != 200:
             return {"status": "FAILED", "remark": "No record found."}
         return r.json()
