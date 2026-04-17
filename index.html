@@ -31,11 +31,12 @@
         </div>
     </div>
     <script>
-        async function checkStatus() {
+async function checkStatus() {
             const id = document.getElementById('id_num').value.trim();
             const ph = document.getElementById('phone').value.trim();
             const resDiv = document.getElementById('result');
             
+            // Frontend Security Check
             if(id.length !== 13) { alert("❌ Please enter a valid 13-digit ID."); return; }
             if(ph.length < 9) { alert("❌ Please enter a valid Phone Number."); return; }
 
@@ -47,19 +48,29 @@
                 const response = await fetch(`/api/check?id_num=${id}&phone=${ph}`);
                 const data = await response.json();
                 
-                if(data.status && data.status === "FAILED") {
+                // 1. Agar API Error de, ya data empty ho, ya status "FAILED" ho
+                if (data.error || data.status === "FAILED" || !data.status || data.status.trim() === "") {
                     resDiv.className = "result-box declined";
-                    resDiv.innerHTML = `⚠️ <strong>INVALID DETAILS</strong><br><small>No record found for this ID/Phone.</small>`;
-                } else if(data.status && data.status.toUpperCase().includes("APPROVED")) {
+                    resDiv.innerHTML = `⚠️ <strong>APPLICATION NOT FOUND</strong><br><small>Please check your ID and Phone Number. No active grant found.</small>`;
+                } 
+                // 2. Agar Approved ho
+                else if (data.status.toUpperCase().includes("APPROVED")) {
                     resDiv.className = "result-box approved";
-                    resDiv.innerHTML = `✅ <strong>APPROVED</strong><br><small>Payday: ${data.payout_date || 'Check SMS'}</small>`;
-                } else {
+                    resDiv.innerHTML = `✅ <strong>STATUS: APPROVED</strong><br><small>Payday: ${data.payout_date || 'Check SMS for date'}</small>`;
+                } 
+                // 3. Agar real mein Pending ho
+                else if (data.status.toUpperCase().includes("PENDING")) {
+                    resDiv.className = "result-box declined"; // Keeping red/yellow background for pending
+                    resDiv.innerHTML = `⏳ <strong>STATUS: PENDING</strong><br><small>Your application is currently being processed by SASSA.</small>`;
+                } 
+                // 4. Any other official status (Declined, Canceled, Referred)
+                else {
                     resDiv.className = "result-box declined";
-                    resDiv.innerHTML = `⏳ <strong>STATUS: ${data.status || 'PENDING'}</strong><br><small>${data.remark || 'Application is in process'}</small>`;
+                    resDiv.innerHTML = `❌ <strong>STATUS: ${data.status.toUpperCase()}</strong><br><small>${data.remark || 'Please check the official SASSA portal for more details.'}</small>`;
                 }
             } catch (e) {
                 resDiv.className = "result-box declined";
-                resDiv.innerHTML = "Server Traffic High. Try again in 1 minute.";
+                resDiv.innerHTML = "System Busy. Please try again in 1 minute.";
             }
         }
     </script>
