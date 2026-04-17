@@ -24,8 +24,8 @@
     </div>
     <div class="container">
         <div class="card">
-<input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="13" id="id_num" placeholder="Enter 13-digit ID Number" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-<input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="10" id="phone" placeholder="Enter Phone Number" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+<input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="13" id="id_num" placeholder="Enter 13-digit SA ID Number" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+<input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="10" id="phone" placeholder="Enter 10-digit Phone (e.g. 081...)" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
             <button onclick="checkStatus()">VERIFY STATUS</button>
             <div id="result" class="result-box"></div>
         </div>
